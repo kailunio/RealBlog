@@ -1,0 +1,24 @@
+<!DOCTYPE>
+<html dir="ltr" lang="zh-CN">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>{{ title }} | {{ page }}</title>
+<link rel="stylesheet" href="http://{{ host }}/themes/{{ theme }}/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="http://{{ host }}/themes/{{ theme }}/style.css" type="text/css" media="screen" />
+{% if info.StatisticsCodeInHead %}
+    {% if info.StatisticsCode %} {{ info.StatisticsCode|safe }} {% endif %}
+{% endif %}
+</head>
+
+<body>
+<div id="wrapper">
+
+{% include 'header.html' %}
+{% block content %}{% endblock %}
+{% block sidebar %}{% endblock %}
+{% include 'footer.html' %}
+
+</div>
+</body>
+</html>
