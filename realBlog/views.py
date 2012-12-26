@@ -279,6 +279,8 @@ def rss(request):
     )
 
     for i in articles:
+        if not i['IsPublic']:
+            continue
         feed.add_item(
             title = i['Title'],
             link = 'http://%s/article/%d/' % (host, i['Id']),
