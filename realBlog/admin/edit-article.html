@@ -16,7 +16,8 @@ function getContent(){
         'use-default-timezone': $('#use-default-timezone').prop('checked'),
         'timezone': $('#timezone').val(),
         'timezone-offset': $('#timezone-offset').val(),
-        'is-set-public': $('#is-set-public').prop('checked')
+        'is-set-public': $('#is-set-public').prop('checked'),
+        'update-post-on': $('#update-post-on').prop('checked')
     };
 }
 function save()
@@ -102,7 +103,6 @@ function onTimezoneOffsetChanged()
                             value="{{ article.Title }}">
                 </div>
                 <div id="pb-text-post-holder" class="pb-post-section">
-                    <input type="hidden" id="aid" name="aid" value="{{ article.Id }}" />
                     <h3 class="pb-section-title">内容</h3>
                     <script type="text/plain" id="editor">{{ content|safe }}</script>
                     <script type="text/javascript">
@@ -132,6 +132,13 @@ function onTimezoneOffsetChanged()
                                 return ('内容已修改，尚未保存。确实要离开么？');
                         }
                     </script>
+                </div>
+                <div class="pb-post-section">
+                    <p>&nbsp;</p>
+                    <label>
+                        <input type="checkbox" id="update-post-on" name="update-post-on">
+                        <span>更新文章发布时间（此项对新文章无效）</span>
+                    </label>
                 </div>
                 <div id="pb-timezone-holder" class="pb-post-section">
                     <h3 class="pb-section-title">时区设定</h3>
@@ -175,8 +182,6 @@ function onTimezoneOffsetChanged()
                             });
                             useCustomTimezone();
                         }
-                    </script>
-                    <script type="text/javascript">
                     </script>
                 </div>
             </div>

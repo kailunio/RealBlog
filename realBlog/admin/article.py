@@ -205,7 +205,8 @@ def get_article_content(d, postOn = None):
     a['Tags'] = split_and_strip(d['tags'])
 
     # 发布时间
-    postOn = (postOn or datetime.utcnow())
+    if postOn is None or d.get('update-post-on') == 'true':
+        postOn = datetime.utcnow()
     a['PostOn'] = postOn
 
     # 时区相关
