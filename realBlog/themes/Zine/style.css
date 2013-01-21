@@ -49,10 +49,10 @@ body{background:#E7E7E7 url(bg.png);border-top:4px solid #2E2E2E}
 */
 #header{border-top:1px solid #FFF;margin-bottom:16px}
 #branding{float:left;padding:10px 0;height:90px}
-#logo{height:70px;width:250px;overflow:hidden}
+#logo{height:70px;overflow:hidden}
 #logo:hover{-moz-animation:logo .6s 1;-webkit-animation:logo .6s 1}
 #logo a{font-size:44px;font-weight:600;color: #FE2E2E;text-decoration:none; }
-#site-description{font-family:微软雅黑; color: #000; font-size: 12pt}
+#site-description{font-family:'Microsoft Yahei'; color: #000; font-size: 12pt}
 /* Toolbar */
 #toolbar{float:right;width:73px;border-bottom:4px solid #000;background:#FFF;height:30px}
 #toolbar ul{position:relative;float:left;list-style:none}
