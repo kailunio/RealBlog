@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 DEBUG = True
+SECRET_KEY = 'g4#^+d4sl+-qql@=h32a_4eeys*&_qln^l5il!=nd*q=3a4ku)'
 
 DATABASE_HOST = '127.0.0.1'
 DATABASE_PORT = 27017
