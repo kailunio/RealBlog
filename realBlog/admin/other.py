@@ -121,8 +121,8 @@ def parse_article_from(item, blog, timezone):
     content.write(item.find(ns['content'] + 'encoded').text)
 
     # 取时间
-    post_on = item.find(ns['wp'] + 'post_date_gmt').text
-    post_on_time = datetime.strptime(post_on, dt_format_str)
+    post_on = item.find(ns['wp'] + 'post_date').text
+    post_on_time = get_utc_from_local(datetime.strptime(post_on, dt_format_str), timezone)
 
     # 取分类和标签
     categories = []
@@ -149,11 +149,10 @@ def parse_article_from(item, blog, timezone):
             content.write(u'<p><a href="' + (author_url or '/') + u'">' + author + u'</a></p>')
 
             # 发布时间
-            comment_date_gmt = c.find(ns['wp'] + 'comment_date_gmt').text
-            dt = datetime.strptime(comment_date_gmt, dt_format_str)
-            local = get_local_from_utc(dt, timezone)
+            comment_date = c.find(ns['wp'] + 'comment_date').text
+            comment_date_time = datetime.strptime(comment_date, dt_format_str)
 
-            content.write(u'<p>发布于:' + local.strftime(dt_format_str) + u' ' + timezone + u'</p>')
+            content.write(u'<p>发布于:' + comment_date_time.strftime(dt_format_str) + u' ' + timezone + u'</p>')
 
             # 发布内容
             comment_content = c.find(ns['wp'] + 'comment_content').text
