@@ -2,9 +2,7 @@
 <html dir="ltr" lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="author" content="">
-<meta name="keywords" content="">
-<meta name="description" content="">
+{% if info.DisallowSpider %}<meta name="robots" content="noindex,nofollow">{% endif %}
 <title>{{ title }} | {{ page }}</title>
 <link type="text/css" rel="stylesheet" href="/themes/{{ theme }}/style.css" media="all">
 <link type="text/css" rel="stylesheet" href="/themes/{{ theme }}/pagenavi-css.css" media="all">

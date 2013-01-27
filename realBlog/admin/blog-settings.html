@@ -140,6 +140,15 @@ function onTimezoneOffsetChanged()
         <span>如果不为空，这个URL将取代缺省RSS(http://{{ host }}/rss/)</span>
     </div>
 </li>
+<li class="clearfix li normal">
+    <div class="item-title">禁止搜索引擎抓取：</div>
+    <div class="item">
+        <label>
+            <input type="checkbox" id="disallow-spider" name="disallow-spider"
+                   {% if disallowSpider %}checked="checked" {% endif %}>
+        </label>
+    </div>
+</li>
 </ul>
 </form>
 <div class="clearfix panel">

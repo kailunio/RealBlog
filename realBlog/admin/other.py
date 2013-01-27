@@ -27,6 +27,7 @@ def show_settings(request):
             'articlesPerPage': info.get('ArticlesPerPage'),
             'defaultTimezone': info.get('DefaultTimezone'),
             'defaultTimezoneOffset': info.get('DefaultTimezoneOffset'),
+            'disallowSpider': info.get('DisallowSpider'),
             'selection': 'blog-settings',
         })
 
@@ -42,6 +43,7 @@ def show_settings(request):
             'ArticlesPerPage': int(d['blog-articles-per-page']),
             'DefaultTimezone': d['blog-default-timezone'],
             'DefaultTimezoneOffset': d['blog-default-timezone-offset'],
+            'DisallowSpider': True if d.get('disallow-spider') else False,
         }
 
         # 时区和其与UTC的偏差

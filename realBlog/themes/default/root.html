@@ -3,6 +3,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+{% if info.DisallowSpider %}<meta name="robots" content="noindex,nofollow">{% endif %}
 <title>{{ title }} | {{ page }}</title>
 <link type="text/css" rel="stylesheet" href="/themes/{{ theme }}/reset.css" media="screen" />
 <link type="text/css" rel="stylesheet" href="/themes/{{ theme }}/style.css" media="screen" />

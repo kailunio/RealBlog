@@ -109,7 +109,8 @@ def render_and_back(request, template, d):
         'CommentCode': 1,
         'LatestCommentsCode': 1,
         'StatisticsCode': 1,
-        'StatisticsCodeInHead' :1
+        'StatisticsCodeInHead': 1,
+        'DisallowSpider': 1,
     })
 
     # 设定模板目录
