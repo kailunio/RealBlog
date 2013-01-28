@@ -27,7 +27,7 @@
 	<ul id="menu-%e9%a6%96%e9%a1%b5" class="menu">
 	{% for i in categories %}
 		<li class="menu-item menu-item-type-taxonomy menu-item-object-category">
-			<a href="http://{{ host }}/category/{{ i.Title }}/"><span>{{ i.Title }}</span><span class="desc">{{ i.Description }}</span></a>
+			<a href="/category/{{ i.Title }}/"><span>{{ i.Title }}</span><span class="desc">{{ i.Description }}</span></a>
 		</li>
 	{% endfor %}
 	</ul>

@@ -246,6 +246,7 @@ def import_and_export(request):
         'page': '导入与导出',
         'author': user['Nickname'],
         'timezone': info['DefaultTimezone'],
+        'selection': 'import-and-output',
     })
 
 
