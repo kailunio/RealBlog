@@ -39,6 +39,8 @@ urlpatterns = patterns('',
     url( r'^upload-xml/$', other.upload_xml),
     url( r'^import-xml/(.+?)/$', other.import_xml),
     url( r'^import-and-export/$', other.import_and_export),
+
+    url( r'^refresh-archive-information/$', other.refresh_archive_information),
 )
 
 

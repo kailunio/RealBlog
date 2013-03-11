@@ -12,22 +12,22 @@ from realBlog.func import *
 ERROR = 'error'
 SUCCEED = 'succeed'
 
+
 @csrf_exempt
 def new(request):
-
     db = connect_blog_database(request)
 
     if request.method == 'GET':
         info = db.infos.find_one()
         return render_admin_and_back(request, 'edit-article.html', {
-            'page':u'新文章',
+            'page': u'新文章',
             'categories': db.categories.find(),
-            'article':{
+            'article': {
                 'Timezone': info.get('DefaultTimezone'),
                 'TimezoneOffset': info.get('DefaultTimezoneOffset'),
                 'UseDefaultTimezone': False,
-                },
-            })
+            },
+        })
 
     elif request.method == 'POST':
         d = request.POST
@@ -42,9 +42,9 @@ def new(request):
         if user is None:
             return HttpResponse(ERROR + '用户状态已过期，请重新登录')
         a['Author'] = {
-            'Username':user['Username'],
-            'Nickname':user['Nickname'],
-            'Email':user['Email'],
+            'Username': user['Username'],
+            'Nickname': user['Nickname'],
+            'Email': user['Email'],
         }
 
         # 取得Id
@@ -52,13 +52,16 @@ def new(request):
         a['Id'] = info['TopId']
 
         db.articles.insert(a)
-        db.infos.update(info, {"$set":{'TopId': info['TopId']+1}}) # TopId++
+        db.infos.update(info, {"$set": {'TopId': info['TopId'] + 1}}) # TopId++
+
+        # 重建归档数据
+        build_archives(db)
 
         return HttpResponse(SUCCEED)
 
+
 @csrf_exempt
 def edit(request, id):
-
     id = int(id)
     db = connect_blog_database(request)
 
@@ -83,7 +86,7 @@ def edit(request, id):
         a['TimezoneOffset'] = a.get('TimezoneOffset') or info.get('TimezoneOffset')
 
         return render_admin_and_back(request, 'edit-article.html', {
-            'page':u'编辑文章',
+            'page': u'编辑文章',
             'categories': categories,
             'cats': cats, 'tags': tags, 'article': a,
             'content': a['Content'] if a['IsPublic'] else a['HiddenContent']
@@ -105,10 +108,14 @@ def edit(request, id):
             return HttpResponse(ERROR + '用户状态已过期，请重新登录')
 
         db.articles.update({'Id': id}, {'$set': a})
+
+        # 重建归档数据
+        build_archives(db)
+
         return HttpResponse(SUCCEED)
 
-def delete(request, id):
 
+def delete(request, id):
     db = connect_blog_database(request)
     id = int(id)
 
@@ -119,26 +126,30 @@ def delete(request, id):
 
         db.articles.remove({'Id': id})
 
+        # 重建归档数据
+        build_archives(db)
+
         return redirect(request, '删除成功，即将返回前一页...', 'admin/')
+
 
 ARTICLES_PER_PAGE = 20
 
-def show_articles(request, page = 1):
 
+def show_articles(request, page=1):
     page = int(page)
     db = connect_blog_database(request)
     info = db.infos.find_one()
     articles = list(db.articles.find(
-        sort = [('PostOn', pymongo.DESCENDING)],
-        skip = (page - 1) * ARTICLES_PER_PAGE,
-        limit = ARTICLES_PER_PAGE,
+        sort=[('PostOn', pymongo.DESCENDING)],
+        skip=(page - 1) * ARTICLES_PER_PAGE,
+        limit=ARTICLES_PER_PAGE,
     ))
 
     for a in articles:
         calculate_local_time(info, a)
 
     article_count = db.articles.count()
-    page_count = article_count / ARTICLES_PER_PAGE +\
+    page_count = article_count / ARTICLES_PER_PAGE + \
                  (1 if article_count % ARTICLES_PER_PAGE else 0)
 
     # 计算页码
@@ -151,30 +162,31 @@ def show_articles(request, page = 1):
             page_range = range(low, page_count + 1)
 
     return render_admin_and_back(request, 'articles.html', {
-        'page':u'文章',
-        'articles':articles,
-        'selection':'articles',
+        'page': u'文章',
+        'articles': articles,
+        'selection': 'articles',
         'page_current': page,
         'page_range': page_range,
         'page_count': page_count,
     })
 
-def show_hidden_article(request, id):
 
+def show_hidden_article(request, id):
     db = connect_blog_database(request)
 
     article = db.articles.find_one({
-        'Id':int(id), 'IsPublic': False
+        'Id': int(id), 'IsPublic': False
     })
     if article is None:
         return HttpResponse(404)
 
     return render_admin_and_back(request, 'show-hidden-article.html', {
-        'page':u'隐私文章 - '+ article['Title'],
-        'article':article,
-        })
+        'page': u'隐私文章 - ' + article['Title'],
+        'article': article,
+    })
 
-def get_article_content(d, postOn = None):
+
+def get_article_content(d, postOn=None):
     """
     取得表单中文章的内容
     """
@@ -196,7 +208,7 @@ def get_article_content(d, postOn = None):
 
     # 分类和Tags
     def split_and_strip(s):
-        return [i.strip() for i in s.split(',') if i!='' ]
+        return [i.strip() for i in s.split(',') if i != '']
 
     categories = d.get('categories') or ''
     a['Categories'] = split_and_strip(d['categories'])

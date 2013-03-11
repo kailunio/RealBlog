@@ -322,7 +322,7 @@ hr{
     border-top:1px dotted #ccc;
 }
 #sidebar .block li a {
-    background:transparent url(images/bullet_black.gif) no-repeat scroll 6px 52%;
+    background:transparent url(bullet_black.gif) no-repeat scroll 6px 52%;
     font-size:13px;
     font-weight:normal;
     padding:2px 0 2px 15px;
@@ -330,7 +330,7 @@ hr{
     border-bottom:none;
 }
 #sidebar .block li a:hover {
-    background:#f7f7f7 url(images/bullet_red.gif) no-repeat scroll 6px 52%;
+    background:#f7f7f7 url(bullet_red.gif) no-repeat scroll 6px 52%;
 }
 #sidebar .widget_search label {
     display:block;
@@ -340,7 +340,7 @@ hr{
     margin:0 0 5px;
 }
 #sidebar .widget_recent_comments li {
-    background:transparent url(images/bullet_black.gif) no-repeat scroll 6px 52%;
+    background:transparent url(bullet_black.gif) no-repeat scroll 6px 52%;
     padding:2px 0 2px 15px;
 }
 #sidebar .widget_recent_comments li a,#sidebar .widget_recent_comments li a:hover{
@@ -413,4 +413,27 @@ hr{
 }
 .textwidget p{
     margin: 2px 2px 6px;
+}
+
+#archive li a{
+    display: inline-block !important;
+    background: none;
+}
+
+.archive-expanded {
+    background: url('switch_expanded.png') no-repeat scroll 7px 52% !important;
+}
+
+.archive-collapsed {
+    background: url('switch_collapsed.png') no-repeat scroll 7px 52% !important;
+}
+.archive-item {
+    margin-left: 20px;
+}
+
+#archive>div {
+    overflow-x: hidden;
+    white-space: normal;
+    line-height: 18px;
+    font-size: 13px;
 }

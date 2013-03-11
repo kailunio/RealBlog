@@ -249,6 +249,17 @@ def import_and_export(request):
         'selection': 'import-and-output',
     })
 
+@csrf_exempt
+def refresh_archive_information(request):
+
+    db = connect_blog_database(request)
+    try:
+        build_archives(db)
+    except Exception, e:
+        return HttpResponse('Error:' + e.message)
+
+    return HttpResponse('Ok')
+
 
 
 

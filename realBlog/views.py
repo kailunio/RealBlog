@@ -49,27 +49,27 @@ def register(request):
 
             # 检查用户是否已存在
             username = d['username']
-            if db.users.find_one({'Username':username}):
+            if db.users.find_one({'Username': username}):
                 return redirect(request, '用户已存在', 'register/')
 
             # 检查Email是否已存在
             email = d['email']
-            if db.users.find_one({'Email':email}):
+            if db.users.find_one({'Email': email}):
                 return redirect(request, 'Email已存在', 'register/')
 
             nickname = d['nickname']
 
             # 对密码进行哈希
             hash = hashlib.sha1()
-            hash.update((username+password).encode('utf8'))
+            hash.update((username + password).encode('utf8'))
             passwordHash = hash.hexdigest()
 
             # 插入用户信息
             db.users.insert({
                 'Username': username,
-                'Password':passwordHash,
-                'Nickname':nickname,
-                'Email':email,
+                'Password': passwordHash,
+                'Nickname': nickname,
+                'Email': email,
             })
             db.connection.disconnect()
 
@@ -81,8 +81,8 @@ def register(request):
         else:
             return redirect(request, '密码重复')
 
-def show_homepage(request, page):
 
+def show_homepage(request, page):
     db = connect_blog_database(request)
 
     info = db.infos.find_one()
@@ -93,36 +93,38 @@ def show_homepage(request, page):
 
     articles = list(
         db.articles.find({'IsPublic': True},
-            sort = [('PostOn', -1)],
-            skip = (page-1)*per_page,
-            limit = per_page,
+                         sort=[('PostOn', -1)],
+                         skip=(page - 1) * per_page,
+                         limit=per_page,
         ))
 
     info = db.infos.find_one()
     for a in articles:
         calculate_local_timeinfo(info, a)
 
+    archives = list(db.archives.find(sort=[('Year', -1)]))
     categories = list(db.categories.find())
     links = list(db.links.find(sort=[('Order', pymongo.ASCENDING)]))
 
     return render_and_back(request, 'index.html', {
-        'page':u'首页',
-        'articles':articles,
-        'links':links,
-        'categories':categories,
-        'paginator':{
+        'page': u'首页',
+        'articles': articles,
+        'archives': archives,
+        'links': links,
+        'categories': categories,
+        'paginator': {
             'Current': page,
-            'Total': count / per_page + (1 if count%per_page else 0),
+            'Total': count / per_page + (1 if count % per_page else 0),
             'PerPage': per_page,
         },
     })
 
-def show_article(request, id):
 
+def show_article(request, id):
     db = connect_blog_database(request)
 
     article = db.articles.find_one({
-        'Id':int(id), 'IsPublic': True
+        'Id': int(id), 'IsPublic': True
     })
     if article is None:
         return HttpResponse('404')
@@ -137,11 +139,41 @@ def show_article(request, id):
         'page': u'文章 - ' + article['Title'],
         'article': article,
         'links': links,
-        'categories':categories,
+        'categories': categories,
     })
 
-def show_category(request, category):
 
+def show_archive(request, year, month):
+    db = connect_blog_database(request)
+
+    year = int(year)
+    month = int(month)
+    date1 = datetime(year, month, 1)
+
+    month += 1
+    if month == 13:
+        year += 1
+        month = 1
+    date2 = datetime(year, month, 1)
+
+    articles = db.articles.find(
+        {'PostOn': {'$gte': date1, '$lt': date2}, 'IsPublic': True},
+        sort=[('PostOn', pymongo.DESCENDING)]
+    )
+    archives = list(db.archives.find(sort=[('Year', -1)]))
+    links = db.links.find(sort=[('Order', pymongo.ASCENDING)])
+    categories = db.categories.find()
+
+    return render_and_back(request, 'index.html', {
+        'page': u'归档 - ' + unicode(year) + u'/' + unicode(month),
+        'links': links,
+        'archives': archives,
+        'articles': articles,
+        'categories': categories,
+    })
+
+
+def show_category(request, category):
     db = connect_blog_database(request)
 
     category = urllib2.unquote(category)
@@ -149,22 +181,25 @@ def show_category(request, category):
     if categoryObject is None:
         return HttpResponse('404')
 
-    links = db.links.find(sort=[('Order', pymongo.ASCENDING)])
     articles = db.articles.find(
         {'Categories': category, 'IsPublic': True},
         sort=[('PostOn', pymongo.DESCENDING)]
     )
+
+    archives = list(db.archives.find(sort=[('Year', -1)]))
+    links = db.links.find(sort=[('Order', pymongo.ASCENDING)])
     categories = db.categories.find()
 
     return render_and_back(request, 'index.html', {
         'page': u'分类 - ' + category,
-        'links':links,
-        'articles':articles,
-        'categories':categories,
-        })
+        'links': links,
+        'archives': archives,
+        'articles': articles,
+        'categories': categories,
+    })
+
 
 def show_tag(request, tag):
-
     db = connect_blog_database(request)
 
     tag = urllib2.unquote(tag)
@@ -173,18 +208,21 @@ def show_tag(request, tag):
         {'Tags': tag, 'IsPublic': True},
         sort=[('PostOn', pymongo.DESCENDING)]
     )
+
+    archives = list(db.archives.find(sort=[('Year', -1)]))
     categories = db.categories.find()
 
     return render_and_back(request, 'index.html', {
         'page': u'标签 - ' + tag,
-        'links':links,
-        'articles':articles,
-        'categories':categories,
+        'links': links,
+        'archives': archives,
+        'articles': articles,
+        'categories': categories,
     })
+
 
 @csrf_exempt
 def install(request):
-
     blog = get_current_blog(request)
     if blog is None:
         return HttpResponse('安装前请配置server.py！')
@@ -211,7 +249,7 @@ def install(request):
 
     # 检查第一个admin账户是否存在
     db = connect_account_database()
-    user = db.users.find_one({'Username':admin})
+    user = db.users.find_one({'Username': admin})
     if user is None:
         return redirect(request, '需要创建管理员账户', 'register/?redirect=install')
 
@@ -223,7 +261,7 @@ def install(request):
 
         set_template_dir('admin')
         return render_to_response('install.html', {
-            'host':request.get_host(),
+            'host': request.get_host(),
             'name': blog[STR_NAME],
             'admins': admins,
         })
@@ -248,7 +286,7 @@ def install(request):
             'Theme': 'default',
             'DefaultTimezone': 'Asia/Shanghai',
             'DefaultTimezoneOffset': '+8',
-            'ArticlesPerPage' : 10,
+            'ArticlesPerPage': 10,
             'CustomRss': '',
             'WeiboCode': '',
             'CommentCode': '',
@@ -264,32 +302,32 @@ def install(request):
 
 
 def rss(request):
-
     host = request.get_host()
     db = connect_blog_database(request)
     info = db.infos.find_one()
     articles = db.articles.find(sort=[('PostOn', pymongo.DESCENDING)])
 
     feed = feedgenerator.Rss201rev2Feed(
-        title = info['Title'],
-        link = 'http://'+host,
-        description = info['Subtitle'],
-        language = 'zh-cn',
-        feed_url = 'http://' + host + '/rss/',
+        title=info['Title'],
+        link='http://' + host,
+        description=info['Subtitle'],
+        language='zh-cn',
+        feed_url='http://' + host + '/rss/',
     )
 
     for i in articles:
         if not i['IsPublic']:
             continue
         feed.add_item(
-            title = i['Title'],
-            link = 'http://%s/article/%d/' % (host, i['Id']),
-            pubdate = datetime.now(),
-            description = i['Content']
+            title=i['Title'],
+            link='http://%s/article/%d/' % (host, i['Id']),
+            pubdate=datetime.now(),
+            description=i['Content']
         )
 
     return HttpResponse(feed.writeString('utf-8'),
-        content_type='application/rss+xml; charset=utf-8')
+                        content_type='application/rss+xml; charset=utf-8')
+
 
 @csrf_exempt
 def login(request):
@@ -327,8 +365,8 @@ def login(request):
 
         return redirect(request, '登陆成功', url or 'admin/', 0)
 
-def logout(request):
 
+def logout(request):
     if 'user' in request.session:
         del request.session['user']
 
@@ -345,7 +383,7 @@ def get_file(request, ext):
 
     mine = query_mine_type(ext)
 
-    return HttpResponse(stream, mimetype = mine)
+    return HttpResponse(stream, mimetype=mine)
 
 
 def query_mine_type(ext):

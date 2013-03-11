@@ -13,6 +13,7 @@ from datetime import datetime
 
 __author__ = 'realh'
 
+
 def ensure_index_of_blog(db):
     """
     创建博客数据库的索引
@@ -24,17 +25,48 @@ def ensure_index_of_blog(db):
     db.articles.ensure_index('Categories')
     db.categories.ensure_index([('Title', 1)])
 
+
 def get_upload_path(name):
     return os.path.join(os.path.dirname(__file__), 'upload', name)
+
 
 def get_themes():
     directory = os.path.join(os.path.dirname(__file__), 'themes')
     return os.listdir(directory)
 
+
 def set_template_dir(*d):
     settings.TEMPLATE_DIRS = (
         os.path.join(os.path.dirname(__file__), *d),
     )
+
+
+def build_archives(db):
+
+    c = None
+    archives = {}
+    articles = db.articles.find({}, sort=[('PostOn', -1)])
+    for a in articles:
+        postOn = a['PostOn']
+
+        # 搜集文章发布日期的年月信息
+        # { year: [month12, month11, ...] }
+        if c is None or c.year != postOn.year or c.month != postOn.month:
+            if postOn.year in archives:
+                archives[postOn.year].append(postOn.month)
+            else:
+                archives[postOn.year] = [postOn.month]
+
+            c = postOn
+
+    # 重新生成集合数据
+    db.archives.drop()
+    for a in archives:
+        db.archives.insert({
+            'Year': a,
+            'Months': archives[a]
+        })
+
 
 def get_utc_from_local(dt, timezone):
     if timezone not in pytz.all_timezones:
@@ -45,6 +77,7 @@ def get_utc_from_local(dt, timezone):
     utc = pytz.utc.normalize(tz.localize(dt))
     return utc
 
+
 def get_local_from_utc(dt, timezone):
     if timezone not in pytz.all_timezones:
         return dt
@@ -54,8 +87,8 @@ def get_local_from_utc(dt, timezone):
     local = tz.normalize(pytz.utc.localize(dt))
     return local
 
-def calculate_local_time(info, article):
 
+def calculate_local_time(info, article):
     # 取得时区
     article['Timezone'] = article.get('Timezone')
     timezone = article.get('Timezone') or info.get('DefaultTimezone')
@@ -73,8 +106,8 @@ def calculate_local_time(info, article):
     # 是否出于夏令时
     article['IsDst'] = tz.dst(postOn).seconds != 0
 
-def calculate_local_timeinfo(info, article):
 
+def calculate_local_timeinfo(info, article):
     # 取得时区
     timezone = article.get('Timezone') or info.get('DefaultTimezone')
     if timezone is None:
@@ -94,12 +127,13 @@ def calculate_local_timeinfo(info, article):
     # 是否出于夏令时
     article['IsDst'] = tz.dst(postOn).seconds != 0
 
+
 def render_and_back(request, template, d):
     """
     渲染博客的普通页面
     """
     db = connect_blog_database(request)
-    info = db.infos.find_one(fields = {
+    info = db.infos.find_one(fields={
         'Theme': 1,
         'Title': 1,
         'Subtitle': 1,
@@ -159,22 +193,22 @@ def render_admin_and_back(request, template, d):
     return HttpResponse(html)
 
 
-
-def redirect(request, title, path = None, delay = 2000):
+def redirect(request, title, path=None, delay=2000):
     set_template_dir('admin')
     if path is None:
         path = request.get_full_path()[1:]
     return render_to_response('redirect.html', {
-        'host':request.get_host(),
+        'host': request.get_host(),
         'title': title,
         'redirect': path,
         'delay': delay,
-        })
+    })
+
 
 def get_current_blog(request):
-
     host = request.get_host()
     return BLOGS.get(host)
+
 
 def connect_blog_database(request):
     """
@@ -191,11 +225,12 @@ def connect_blog_database(request):
     if DATABASE_USERNAME is None:
         host = 'mongodb://%s:%d' % (DATABASE_HOST, DATABASE_PORT)
     else:
-        host = 'mongodb://%s:%s@%s:%d' %\
+        host = 'mongodb://%s:%s@%s:%d' % \
                (DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT)
     c = Connection(host)
 
     return c['realBlog_blogs_' + name]
+
 
 def connect_account_database():
     """
@@ -205,7 +240,7 @@ def connect_account_database():
     if DATABASE_USERNAME is None:
         host = 'mongodb://%s:%d' % (DATABASE_HOST, DATABASE_PORT)
     else:
-        host = 'mongodb://%s:%s@%s:%d' %\
+        host = 'mongodb://%s:%s@%s:%d' % \
                (DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT)
 
     c = Connection(host)

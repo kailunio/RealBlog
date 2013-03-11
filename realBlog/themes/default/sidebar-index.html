@@ -32,7 +32,38 @@
         {{ info.LatestCommentsCode|safe }}
     </div>
     {% endif %}
-	
+
+    <div class="block widget_links sidebar-box">
+        <h3>归档</h3>
+        <ul id="archive">
+            <script type="text/javascript">
+                function expandArchiveYear(year){
+                    var id = '#archive-year-' + year.toString();
+                    var div = $(id);
+                    if(div.attr('data-expanded') == 'true'){
+                        $(id + '>div').css('display', 'none');
+                        $(id + '>a.archive-expanded').attr('class', 'archive-collapsed');
+                        div.attr('data-expanded', 'false');
+                    }else{
+                        $(id + '>div').css('display', 'block');
+                        $(id + '>a.archive-collapsed').attr('class', 'archive-expanded');
+                        div.attr('data-expanded', 'true');
+                    }
+                }
+            </script>
+            {% for y in archives %}
+            <li id="archive-year-{{ y.Year }}" data-expanded="false">
+                <a class="archive-collapsed" href="javascript:expandArchiveYear({{ y.Year }})">{{ y.Year }}年</a>
+                {% for m in y.Months %}
+                <div style="display: none;">
+                    <a class="archive-item" href="/archive/{{ y.Year }}/{{ m }}/">{{ m }}月</a>
+                </div>
+                {% endfor %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
 	<div class="block text-10 widget_text">
 		<h3>技术支持</h3>
 		<div class="textwidget">
