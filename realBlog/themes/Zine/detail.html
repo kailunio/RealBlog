@@ -28,7 +28,13 @@
             发布于 {{ article.PostOn|date:"N j, Y H:i" }} | 时区：{{ article.Timezone }} {{ article.TimezoneOffset }} {{ article.IsDst|yesno:"夏令时," }}
         </div>
 		<div class="entry-content">
-			{{ article.Content|safe }}
+            {% if article.IsEncrypted %}
+                <span>请输入访问密码：</span>
+                <input type="password" id="pass-{{ article.Id }}">
+                <input type="button" onclick="visitEncryptedArticle({{ article.Id }})" value="密码输入完毕">
+            {% else %}
+                {{ article.Content|safe }}
+            {% endif %}
 		</div>
 	</div>
     {% if info.CommentCode %}{{ info.CommentCode|safe }}{% endif %}

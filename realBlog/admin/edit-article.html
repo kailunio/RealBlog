@@ -8,7 +8,7 @@
 
 <script>
 function getContent(){
-    return {
+    var content = {
         'title': $('#title').val(),
         'content': e.getContent(),
         'categories': $('#categories').val(),
@@ -17,8 +17,13 @@ function getContent(){
         'timezone': $('#timezone').val(),
         'timezone-offset': $('#timezone-offset').val(),
         'is-set-public': $('#is-set-public').prop('checked'),
+        'is-encrypted': $('#encrypt-article').prop('checked'),
         'update-post-on': $('#update-post-on').prop('checked')
     };
+    if(content['is-encrypted']){
+        content['password'] = $('#encrypt-article-password').val();
+    }
+    return content;
 }
 function save()
 {
@@ -139,6 +144,15 @@ function onTimezoneOffsetChanged()
                         <input type="checkbox" id="update-post-on" name="update-post-on">
                         <span>更新文章发布时间（此项对新文章无效）</span>
                     </label>
+                </div>
+                <div class="pb-post-section">
+                    <p>&nbsp;</p>
+                    <label>
+                        <input type="checkbox" id="encrypt-article" name="encrypt-article"
+                            {% if article.IsEncrypted %}checked="checked"{% endif %}>
+                        <span>加密文章：</span>
+                    </label>
+                    <input type="password" id="encrypt-article-password" name="encrypt-article-password" value="{{ article.Password }}">
                 </div>
                 <div id="pb-timezone-holder" class="pb-post-section">
                     <h3 class="pb-section-title">时区设定</h3>

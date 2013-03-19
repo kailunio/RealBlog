@@ -24,8 +24,14 @@
         | <b>Timezone:</b> {{ i.Timezone }} {{ i.TimezoneOffset }} {{ i.IsDst|yesno:"夏令时," }}
     </small>
     <p>
-        {{ i.Content|safe }}
-        <a href="/article/{{ i.Id }}/" class="more-link">阅读全文 »</a>
+        {% if i.IsEncrypted %}
+            <span>请输入访问密码：</span>
+            <input type="password" id="pass-{{ i.Id }}">
+            <input type="button" onclick="visitEncryptedArticle({{ i.Id }})" value="密码输入完毕">
+        {% else %}
+            {{ i.Content|safe }}
+            <a href="/article/{{ i.Id }}/" class="more-link">阅读全文 »</a>
+        {% endif %}
     </p>
     <hr />
 </div>

@@ -143,6 +143,43 @@ def show_article(request, id):
     })
 
 
+def show_article_encrypted(request, id, password):
+    db = connect_blog_database(request)
+
+    article = db.articles.find_one({
+        'Id': int(id), 'IsPublic': True, 'IsEncrypted': True,
+    })
+    if article is None:
+        return HttpResponse('404')
+
+    # 验证密码
+    hash = hashlib.sha1()
+    hash.update(article['Password'])
+    d = datetime.utcnow()
+    hash.update("%d/%d/%d" % (d.year, d.month, d.day))
+
+    if password != hash.hexdigest():
+        return redirect(request, '密码错误', '')
+
+    info = db.infos.find_one()
+    calculate_local_timeinfo(info, article)
+
+    categories = list(db.categories.find())
+    links = list(db.links.find(sort=[('Order', pymongo.ASCENDING)]))
+
+    # 加密文章的内容保存于HiddenContent
+    article['IsEncrypted'] = None
+    article['Password'] = None
+    article['Content'] = article['HiddenContent']
+
+    return render_and_back(request, 'detail.html', {
+        'page': u'文章 - ' + article['Title'],
+        'article': article,
+        'links': links,
+        'categories': categories,
+    })
+
+
 def show_archive(request, year, month):
     db = connect_blog_database(request)
 

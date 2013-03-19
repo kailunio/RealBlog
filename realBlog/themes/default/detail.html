@@ -22,7 +22,15 @@
         <b>Posted:</b> {{ article.PostOn|date:"N j, Y H:i" }}
         | <b>Timezone:</b> {{ article.Timezone }} {{ article.TimezoneOffset }} {{ article.IsDst|yesno:"夏令时," }}
     </small>
-    {{ article.Content|safe }}
+    <p>
+    {% if article.IsEncrypted %}
+        <span>请输入访问密码：</span>
+        <input type="password" id="pass-{{ article.Id }}">
+        <input type="button" onclick="visitEncryptedArticle({{ article.Id }})" value="密码输入完毕">
+    {% else %}
+        {{ article.Content|safe }}
+    {% endif %}
+    </p>
     <div class="navigation">
         <div class="alignleft"></div>
         <div class="alignright"></div>

@@ -89,7 +89,7 @@ def edit(request, id):
             'page': u'编辑文章',
             'categories': categories,
             'cats': cats, 'tags': tags, 'article': a,
-            'content': a['Content'] if a['IsPublic'] else a['HiddenContent']
+            'content': a['Content'] if a.get('IsPublic') and not a.get('IsEncrypted') else a['HiddenContent']
         })
 
     elif request.method == 'POST':
@@ -199,12 +199,27 @@ def get_article_content(d, postOn=None):
         return None, ERROR + '正文都不能为空'
 
     is_public = d.get('is-set-public') == 'true'
+    is_encrypted = d.get('is-encrypted') == 'true'
+
+    password = d.get('password')
+    if is_encrypted:
+        if password is None or password == '':
+            return None, ERROR + '不允许设定空密码'
+    else:
+        password = ''
+
     a = {
         'Title': title,
         'IsPublic': is_public,
-        'Content': content if is_public else None,
-        'HiddenContent': content if not is_public else None,
+        'IsEncrypted': is_encrypted,
+        'Password': password,
     }
+    if is_public and not is_encrypted:
+        a['Content'] = content
+        a['HiddenContent'] = None
+    else:
+        a['Content'] = None
+        a['HiddenContent'] = content
 
     # 分类和Tags
     def split_and_strip(s):
