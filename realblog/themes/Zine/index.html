@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block 'main' %}
+<div id="content" role="main">
+	{% for i in articles %}
+	<div id="post-{{ i.Id }}" class="post type-post status-publish format-standard hentry category-product">
+		<h2 class="entry-title">
+			<a href="/article/{{ i.Id }}/" title="链向 {{ i.Title}} 的固定链接" rel="bookmark">{{ i.Title }}</a>
+		</h2>
+		<div class="entry-meta">
+			<span class="entry-date">
+				<span class="entry-month">{{ i.PostOn|date:'Y-n' }}</span>
+				<span class="sl">-</span>
+				<span class="entry-day">{{ i.PostOn|date:'d' }}</span>
+			</span>
+			分类：
+            {% for c in i.Categories %}
+                <a href="/category/{{ c }}/" title="查看 {{ c }} 中的全部文章" rel="category">{{ c }}</a>
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+			{% if i.Tags %}
+                | 标签：
+                {% for t in i.Tags %}
+                    <a href="/tag/{{ t }}/" title="查看包含 {{ t }} 的全部文章" rel="tag">{{ t }}</a>
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            {% endif %}
+            | 作者：{{ i.Author.Nickname }} <br />
+            发布于 {{ i.PostOn|date:"N j, Y H:i" }} | 时区：{{ i.Timezone }} {{ i.TimezoneOffset }} {{ i.IsDst|yesno:"夏令时," }}
+        </div>
+		<div class="entry-content">
+            {% if i.IsEncrypted %}
+                <span>请输入访问密码：</span>
+                <input type="password" id="pass-{{ i.Id }}">
+                <input type="button" onclick="visitEncryptedArticle({{ i.Id }})" value="密码输入完毕">
+            {% else %}
+                {{ i.Content|safe }}
+            {% endif %}
+		</div>
+	</div>
+	{% endfor %}
+	{% include 'paginator.html' %}
+</div>
+{% include 'sidebar-index.html' %}
+
+<div class="clear"></div>
+{% endblock %}

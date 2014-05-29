@@ -89,7 +89,7 @@ Django、pymongo和pytz
     logdate = true
     master = true
     memory-report = true
-    module = realBlog.wsgi:application
+    module = realblog.wsgi:application
     socket = /var/www/realblog/uwsgi.sock
     pidfile = /var/www/realblog/uwsgi.pid
     processes = 2
