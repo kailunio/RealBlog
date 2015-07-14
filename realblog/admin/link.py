@@ -2,7 +2,7 @@
 import pymongo
 from bson.objectid import ObjectId
 from django.views.decorators.csrf import csrf_exempt
-from realBlog.func import redirect, render_admin_and_back, connect_blog_database
+from realblog.func import redirect, render_admin_and_back, connect_blog_database
 
 __author__ = '在何方'
 

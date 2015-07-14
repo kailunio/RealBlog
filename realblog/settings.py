@@ -1,15 +1,12 @@
-# Django settings for realBlog project.
+# Django settings for realblog project.
 
 from config import server
 
 DEBUG = server.DEBUG
 
-if DEBUG:
-    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-else:
-    SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = False
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -86,7 +83,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'g4#^+d4sl+-qql@=h32a_4eeys*&_qln^l5il!=nd*q=3a4ku)'
+SECRET_KEY = server.SECRET_KEY
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -98,13 +95,13 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'realBlog.middleware.CheckIsAdminMiddleware',
+    'realblog.middleware.CheckIsAdminMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'realBlog.urls'
+ROOT_URLCONF = 'realblog.urls'
 
 TEMPLATE_DIRS = ()
 

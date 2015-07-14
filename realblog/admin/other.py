@@ -5,9 +5,9 @@ from xml.etree import ElementTree
 from datetime import datetime
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from realBlog.admin.timezone import get_timezone_object
-from realBlog.func import *
-from realBlog.config.server import BLOGS
+from realblog.admin.timezone import get_timezone_object
+from realblog.func import *
+from realblog.config.server import BLOGS
 
 __author__ = '在何方'
 
@@ -27,6 +27,7 @@ def show_settings(request):
             'articlesPerPage': info.get('ArticlesPerPage'),
             'defaultTimezone': info.get('DefaultTimezone'),
             'defaultTimezoneOffset': info.get('DefaultTimezoneOffset'),
+            'disallowSpider': info.get('DisallowSpider'),
             'selection': 'blog-settings',
         })
 
@@ -42,6 +43,7 @@ def show_settings(request):
             'ArticlesPerPage': int(d['blog-articles-per-page']),
             'DefaultTimezone': d['blog-default-timezone'],
             'DefaultTimezoneOffset': d['blog-default-timezone-offset'],
+            'DisallowSpider': True if d.get('disallow-spider') else False,
         }
 
         # 时区和其与UTC的偏差
@@ -244,7 +246,19 @@ def import_and_export(request):
         'page': '导入与导出',
         'author': user['Nickname'],
         'timezone': info['DefaultTimezone'],
+        'selection': 'import-and-output',
     })
+
+@csrf_exempt
+def refresh_archive_information(request):
+
+    db = connect_blog_database(request)
+    try:
+        build_archives(db)
+    except Exception, e:
+        return HttpResponse('Error:' + e.message)
+
+    return HttpResponse('Ok')
 
 
 

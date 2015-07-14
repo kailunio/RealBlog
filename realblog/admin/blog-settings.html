@@ -140,6 +140,32 @@ function onTimezoneOffsetChanged()
         <span>如果不为空，这个URL将取代缺省RSS(http://{{ host }}/rss/)</span>
     </div>
 </li>
+<li class="clearfix li normal">
+    <div class="item-title">禁止搜索引擎抓取：</div>
+    <div class="item">
+        <label>
+            <input type="checkbox" id="disallow-spider" name="disallow-spider"
+                   {% if disallowSpider %}checked="checked" {% endif %}>
+        </label>
+    </div>
+</li>
+<li class="clearfix li normal">
+    <script type="text/javascript">
+        function refreshArchiveInformation(){
+            $.post('/admin/refresh-archive-information/', {}, function (data){
+                if (data.indexOf('Error') == 0) {
+                    alert(data);
+                } else {
+                    alert('重置完成！');
+                }
+            }).error('未知错误');
+        }
+    </script>
+    <div class="item-title">刷新归档信息</div>
+    <div class="item">
+        <input type="button" value="执行" onclick="refreshArchiveInformation()">
+    </div>
+</li>
 </ul>
 </form>
 <div class="clearfix panel">

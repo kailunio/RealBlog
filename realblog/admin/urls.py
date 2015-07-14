@@ -4,7 +4,7 @@ import os
 from django.conf.urls import patterns, include, url
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from realBlog.admin import article, category, link, other
+from realblog.admin import article, category, link, other
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -39,6 +39,8 @@ urlpatterns = patterns('',
     url( r'^upload-xml/$', other.upload_xml),
     url( r'^import-xml/(.+?)/$', other.import_xml),
     url( r'^import-and-export/$', other.import_and_export),
+
+    url( r'^refresh-archive-information/$', other.refresh_archive_information),
 )
 
 

@@ -34,9 +34,11 @@
                     <div class="feed-bd no-hd-content">
                         <h4 class="feed-title">
                             {% if i.IsPublic %}
-                                <a href="http://{{ host }}/article/{{ i.Id }}/" target="_blank" style="color:#444">{{ i.Title }}</a>
+                                <a href="http://{{ host }}/article/{{ i.Id }}/" target="_blank" style="color:#444">{% if i.IsEncrypted %}${% endif %}
+                                    {{ i.Title }}</a>
                             {% else %}
-                                <a href="http://{{ host }}/admin/show-hidden-article/{{ i.Id }}/" target="_blank" style="color:#aaa">* {{ i.Title }}</a>
+                                <a href="http://{{ host }}/admin/show-hidden-article/{{ i.Id }}/" target="_blank" style="color:#aaa">*{% if i.IsEncrypted %}${% endif %}
+                                    {{ i.Title }}</a>
                             {% endif %}
                             <a href="" class="feed-user">{{ i.Author.Nickname }}</a>
                         </h4>

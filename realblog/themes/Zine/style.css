@@ -272,3 +272,36 @@ div.error404{text-align:center;border:none 0;background:none;-webkit-box-shadow:
 #ckepop{margin:8px 0 0 6px;_margin-left:4px}
 #ckepop a{color:#000}
 @media all and (-webkit-min-device-pixel-ratio:10000),not all and (-webkit-min-device-pixel-ratio:0){.wp-smiley,#sidebar .avatar{vertical-align:middle}}
+
+/* Added by Real Xu */
+#archive li{
+    line-height: 18px !important;
+}
+
+#archive li a{
+    font-size: 13px;
+    font-weight: normal;
+    padding: 2px 0 2px 15px;
+    border-bottom: none;
+    display: inline-block;
+    background: none;
+}
+
+.archive-expanded {
+    background: url('switch_expanded.png') no-repeat scroll 7px 52% !important;
+}
+
+.archive-collapsed {
+    background: url('switch_collapsed.png') no-repeat scroll 7px 52% !important;
+}
+.archive-item {
+    background: url('switch_item.png') no-repeat scroll 7px 52% !important;
+    margin-left: 20px;
+}
+
+#archive>div {
+    overflow-x: hidden;
+    white-space: normal;
+    line-height: 18px;
+    font-size: 13px;
+}

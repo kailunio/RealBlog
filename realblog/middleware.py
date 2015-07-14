@@ -2,7 +2,7 @@
 import urllib2
 from django.http import HttpResponseRedirect
 from func import get_current_blog
-from realBlog.config.server import *
+from realblog.config.server import *
 
 __author__ = 'Home'
 
@@ -10,7 +10,7 @@ __author__ = 'Home'
 class CheckIsAdminMiddleware(object):
     def process_view(self, request, view, args, kwargs):
         module = view.__module__
-        if module.find("realBlog.admin.") == 0:
+        if module.find("realblog.admin.") == 0:
             url = urllib2.quote(request.get_full_path()[1:])
 
             user = request.session.get('user')
